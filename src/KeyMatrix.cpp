@@ -1,7 +1,6 @@
 #include "KeyMatrix.h"
 #include "KeyEventQueue.h"
 
-extern Console console;
 void KeyMatrix::begin(KeyEventQueue* queue) {
   _queue = queue;
   setMap();  // set to default map

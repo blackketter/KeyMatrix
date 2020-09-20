@@ -31,10 +31,10 @@ const icon_t getKeyIcon(keycode_t c) {
   }
 }
 
-modifierkey_t getKeyModifier(keycode_t c) {
+keycategory_t getKeyCategory(keycode_t c) {
   const keyinfo_t* info = getKeyInfo(c);
   if (info) {
-    return info->modifier;
+    return info->category;
   } else {
     return false;
   }

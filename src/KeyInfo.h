@@ -18,9 +18,8 @@ const keycode_t KEY_RIGHT_PAD = 205;
 
 const keycode_t KEY_EXIT = 206;
 
-// 207?
+// 207 available
 
-const keycode_t MIN_MOUSE_KEY             = 208;
 const keycode_t KEY_MOUSE_MOVE_UP         = 208;
 const keycode_t KEY_MOUSE_MOVE_DOWN       = 209;
 const keycode_t KEY_MOUSE_MOVE_LEFT       = 210;
@@ -34,26 +33,31 @@ const keycode_t KEY_MOUSE_SCROLL_UP       = 217;
 const keycode_t KEY_MOUSE_SCROLL_DOWN     = 218;
 const keycode_t KEY_MOUSE_SCROLL_LEFT     = 219;
 const keycode_t KEY_MOUSE_SCROLL_RIGHT    = 220;
-const keycode_t MAX_MOUSE_KEY             = 220;
 
-const keycode_t MODIFIERKEY_MOUSE         = 221;
-const keycode_t MODIFIERKEY_MOUSE_SCROLL  = 222;
+// 221, 222 available
+
 const keycode_t KEY_FIRST_MACRO           = 223; // leave room for 12 macros for now
-
+const keycode_t KEY_MACRO_TOTAL           = 12;
+//const keycode_t nextavailable           = KEY_FIRST_MACRO + KEY_MACRO_TOTAL;
 
 const keycode_t MAX_SOFT_KEY = 255;
 
-typedef uint8_t modifierkey_t;
+typedef uint8_t keycategory_t;
 
-enum modifierKeys {
-  MODIFIER_NONE = 0,
-  MODIFIER_SHIFT = 1,
-  MODIFIER_GUI = 2,
-  MODIFIER_ALT = 4,
-  MODIFIER_CTRL = 8,
-  MODIFIER_FN = 16,
-  MODIFIER_MOUSE = 32,
-  MODIFIER_MOUSE_SCROLL = 64
+enum keyCategory {
+  KEY_CATEGORY_NONE,
+  KEY_CATEGORY_ALPHA,
+  KEY_CATEGORY_NUM,
+  KEY_CATEGORY_PUNCTUATION,
+  KEY_CATEGORY_TEXT,
+  KEY_CATEGORY_MODIFIER,
+  KEY_CATEGORY_FUNCTION,
+  KEY_CATEGORY_CURSOR,
+  KEY_CATEGORY_SYSTEM,
+  KEY_CATEGORY_MACRO,
+  KEY_CATEGORY_MOUSE,
+  KEY_CATEGORY_MEDIA,
+  KEY_CATEGORY_KEYPAD
 };
 
 typedef struct modifiedkey_t {
@@ -117,190 +121,192 @@ typedef struct keyinfo_t {
   const char c;
   const char* const label;
   const icon_t icon;
-  const modifierkey_t modifier;
+  const keycategory_t category;
 } keyinfo_t;
-
-typedef struct keychord_t {
-  modifierkey_t modifier;
-  keycode_t code[];  // terminated with NO_CODE;
-} keychord_t;
 
 const keyinfo_t keyInfo[] = {
 // nonstandard keys
-  { KEY_LEFT_FN, 0, "fn left", nullptr, MODIFIER_FN },
-  { KEY_RIGHT_FN, 0, "fn right", nullptr, MODIFIER_FN },
+  { KEY_LEFT_FN, 0, "fn", nullptr, KEY_CATEGORY_MODIFIER },
+  { KEY_RIGHT_FN, 0, "fn", nullptr, KEY_CATEGORY_MODIFIER },
 
-  { KEY_MOUSE_MOVE_UP, 0, "mouse up", mouseUpIcon, false },
-  { KEY_MOUSE_MOVE_DOWN, 0, "mouse down", mouseDownIcon, false },
-  { KEY_MOUSE_MOVE_LEFT, 0, "mouse left", mouseLeftIcon, false },
-  { KEY_MOUSE_MOVE_RIGHT, 0, "mouse right", mouseRightIcon, false },
-  { KEY_MOUSE_BUTTON_LEFT, 0, "mouse button left", mouseButtonLeftIcon, false },
-  { KEY_MOUSE_BUTTON_MIDDLE, 0, "mouse button middle", mouseButtonMiddleIcon, false },
-  { KEY_MOUSE_BUTTON_RIGHT, 0, "mouse button right", mouseButtonRightIcon, false },
-  { KEY_MOUSE_BUTTON_BACK, 0, "mouse button back", mouseButtonBackIcon, false },
-  { KEY_MOUSE_BUTTON_FORWARD, 0, "mouse button fwd", mouseButtonFwdIcon, false },
-  { KEY_MOUSE_SCROLL_UP, 0, "mouse scroll up", mouseScrollUpIcon, false },
-  { KEY_MOUSE_SCROLL_DOWN, 0, "mouse scroll down", mouseScrollDownIcon, false },
-  { KEY_MOUSE_SCROLL_LEFT, 0, "mouse scroll left", mouseScrollLeftIcon, false },
-  { KEY_MOUSE_SCROLL_RIGHT, 0, "mouse scroll right", mouseScrollRightIcon, false },
-  { MODIFIERKEY_MOUSE, 0, "mouse", mouseIcon, MODIFIER_MOUSE },
-  { MODIFIERKEY_MOUSE_SCROLL, 0, "mouse scroll", mouseScrollIcon, MODIFIER_MOUSE_SCROLL },
+  { KEY_MOUSE_MOVE_UP, 0, "mouse up", mouseUpIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_MOVE_DOWN, 0, "mouse down", mouseDownIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_MOVE_LEFT, 0, "mouse left", mouseLeftIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_MOVE_RIGHT, 0, "mouse right", mouseRightIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_BUTTON_LEFT, 0, "mouse button left", mouseButtonLeftIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_BUTTON_MIDDLE, 0, "mouse button middle", mouseButtonMiddleIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_BUTTON_RIGHT, 0, "mouse button right", mouseButtonRightIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_BUTTON_BACK, 0, "mouse button back", mouseButtonBackIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_BUTTON_FORWARD, 0, "mouse button fwd", mouseButtonFwdIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_SCROLL_UP, 0, "mouse scroll up", mouseScrollUpIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_SCROLL_DOWN, 0, "mouse scroll down", mouseScrollDownIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_SCROLL_LEFT, 0, "mouse scroll left", mouseScrollLeftIcon, KEY_CATEGORY_MOUSE },
+  { KEY_MOUSE_SCROLL_RIGHT, 0, "mouse scroll right", mouseScrollRightIcon, KEY_CATEGORY_MOUSE },
+
+  { KEY_MENU, 0, "menu", nullptr, KEY_CATEGORY_SYSTEM },
 
 // standard keys
-  { MODIFIERKEY_LEFT_CTRL, 0, "left ctrl", controlIcon, MODIFIER_CTRL },
-  { MODIFIERKEY_LEFT_SHIFT, 0, "left shift", shiftIcon, MODIFIER_SHIFT },
-  { MODIFIERKEY_LEFT_ALT, 0, "left opt", optionIcon, MODIFIER_ALT },
-  { MODIFIERKEY_LEFT_GUI, 0, "left cmd", commandIcon, MODIFIER_GUI },
-  { MODIFIERKEY_RIGHT_CTRL, 0, "right ctrl", controlIcon, MODIFIER_CTRL },
-  { MODIFIERKEY_RIGHT_SHIFT, 0, "right shift", shiftIcon, MODIFIER_SHIFT },
-  { MODIFIERKEY_RIGHT_ALT, 0, "right opt", optionIcon, MODIFIER_ALT },
-  { MODIFIERKEY_RIGHT_GUI, 0, "right cmd", commandIcon, MODIFIER_GUI },
+  { MODIFIERKEY_LEFT_CTRL, 0, "left ctrl", controlIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_LEFT_SHIFT, 0, "left shift", shiftIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_LEFT_ALT, 0, "left opt", optionIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_LEFT_GUI, 0, "left cmd", commandIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_RIGHT_CTRL, 0, "right ctrl", controlIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_RIGHT_SHIFT, 0, "right shift", shiftIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_RIGHT_ALT, 0, "right opt", optionIcon, KEY_CATEGORY_MODIFIER },
+  { MODIFIERKEY_RIGHT_GUI, 0, "right cmd", commandIcon, KEY_CATEGORY_MODIFIER },
 
-  { KEY_SYSTEM_POWER_DOWN, 0, "pow", nullptr, false },
-  { KEY_SYSTEM_SLEEP, 0, "sleep", nullptr, false },
-  { KEY_SYSTEM_WAKE_UP, 0, "wake", nullptr, false },
+  { KEY_SYSTEM_POWER_DOWN, 0, "pow", nullptr, KEY_CATEGORY_SYSTEM },
+  { KEY_SYSTEM_SLEEP, 0, "sleep", nullptr, KEY_CATEGORY_SYSTEM },
+  { KEY_SYSTEM_WAKE_UP, 0, "wake", nullptr, KEY_CATEGORY_SYSTEM },
 
-  { KEY_MEDIA_PLAY, 0, "play", playIcon, false },
-  { KEY_MEDIA_PAUSE, 0, "pause", pauseIcon, false },
-  { KEY_MEDIA_RECORD, 0, "rec", recordIcon, false },
-  { KEY_MEDIA_FAST_FORWARD, 0, "ffw", ffIcon, false },
-  { KEY_MEDIA_REWIND, 0, "rew", rewIcon, false },
-  { KEY_MEDIA_NEXT_TRACK, 0, "next", ffIcon, false },
-  { KEY_MEDIA_PREV_TRACK, 0, "prev", rewIcon, false },
-  { KEY_MEDIA_STOP, 0, "stop", stopIcon, false },
-  { KEY_MEDIA_EJECT, 0, "eject", ejectIcon, false },
-  { KEY_MEDIA_RANDOM_PLAY, 0, "random", nullptr, false },
-  { KEY_MEDIA_PLAY_PAUSE, 0, "pause", pauseIcon, false },
-  { KEY_MEDIA_PLAY_SKIP, 0, "skip", ffIcon, false },
-  { KEY_MEDIA_MUTE, 0, "mute", muteIcon, false },
-  { KEY_MEDIA_VOLUME_INC, 0, "vol+", volPlusIcon, false },
-  { KEY_MEDIA_VOLUME_DEC, 0, "vol-", volMinusIcon, false },
+  { KEY_MEDIA_PLAY, 0, "play", playIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_PAUSE, 0, "pause", pauseIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_RECORD, 0, "rec", recordIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_FAST_FORWARD, 0, "ffw", ffIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_REWIND, 0, "rew", rewIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_NEXT_TRACK, 0, "next", ffIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_PREV_TRACK, 0, "prev", rewIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_STOP, 0, "stop", stopIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_EJECT, 0, "eject", ejectIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_RANDOM_PLAY, 0, "random", nullptr, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_PLAY_PAUSE, 0, "pause", pauseIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_PLAY_SKIP, 0, "skip", ffIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_MUTE, 0, "mute", muteIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_VOLUME_INC, 0, "vol+", volPlusIcon, KEY_CATEGORY_MEDIA },
+  { KEY_MEDIA_VOLUME_DEC, 0, "vol-", volMinusIcon, KEY_CATEGORY_MEDIA },
 
-  { KEY_FIRST_MACRO + 0, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 1, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 2, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 3, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 4, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 5, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 6, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 7, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 8, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 9, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 10, 0, "macro 0", macroIcon, false },
-  { KEY_FIRST_MACRO + 11, 0, "macro 0", macroIcon, false },
+  { KEY_FIRST_MACRO + 0, 0, "macro 0", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 1, 0, "macro 1", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 2, 0, "macro 2", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 3, 0, "macro 3", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 4, 0, "macro 4", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 5, 0, "macro 5", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 6, 0, "macro 6", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 7, 0, "macro 7", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 8, 0, "macro 8", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 9, 0, "macro 9", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 10, 0, "macro 10", macroIcon, KEY_CATEGORY_MACRO },
+  { KEY_FIRST_MACRO + 11, 0, "macro 11", macroIcon, KEY_CATEGORY_MACRO },
 
-  { KEY_A, 'a', "a", nullptr, false },
-  { KEY_B, 'b', "b", nullptr, false },
-  { KEY_C, 'c', "c", nullptr, false },
-  { KEY_D, 'd', "d", nullptr, false },
-  { KEY_E, 'e', "e", nullptr, false },
-  { KEY_F, 'f', "f", nullptr, false },
-  { KEY_G, 'g', "g", nullptr, false },
-  { KEY_H, 'h', "h", nullptr, false },
-  { KEY_I, 'i', "i", nullptr, false },
-  { KEY_J, 'j', "j", nullptr, false },
-  { KEY_K, 'k', "k", nullptr, false },
-  { KEY_L, 'l', "l", nullptr, false },
-  { KEY_M, 'm', "m", nullptr, false },
-  { KEY_N, 'n', "n", nullptr, false },
-  { KEY_O, 'o', "o", nullptr, false },
-  { KEY_P, 'p', "p", nullptr, false },
-  { KEY_Q, 'q', "q", nullptr, false },
-  { KEY_R, 'r', "r", nullptr, false },
-  { KEY_S, 's', "s", nullptr, false },
-  { KEY_T, 't', "t", nullptr, false },
-  { KEY_U, 'u', "u", nullptr, false },
-  { KEY_V, 'v', "v", nullptr, false },
-  { KEY_W, 'w', "w", nullptr, false },
-  { KEY_X, 'x', "x", nullptr, false },
-  { KEY_Y, 'y', "y", nullptr, false },
-  { KEY_Z, 'z', "z", nullptr, false },
-  { KEY_1, '1', "1", nullptr, false },
-  { KEY_2, '2', "2", nullptr, false },
-  { KEY_3, '3', "3", nullptr, false },
-  { KEY_4, '4', "4", nullptr, false },
-  { KEY_5, '5', "5", nullptr, false },
-  { KEY_6, '6', "6", nullptr, false },
-  { KEY_7, '7', "7", nullptr, false },
-  { KEY_8, '8', "8", nullptr, false },
-  { KEY_9, '9', "9", nullptr, false },
-  { KEY_0, '0', "0", nullptr, false },
-  { KEY_ENTER, '\r', "return", returnIcon, false },
-  { KEY_ESC, 0x1b, "esc", escIcon, false },
-  { KEY_BACKSPACE, 0x08, "bs", backspaceIcon, false },
-  { KEY_TAB, '\t', "tab", tabIcon, false },
-  { KEY_SPACE, ' ', " ", spaceIcon, false },
-  { KEY_MINUS, '-', "-", nullptr, false },
-  { KEY_EQUAL, '=', "=", nullptr, false },
-  { KEY_LEFT_BRACE, '[', "[", nullptr, false },
-  { KEY_RIGHT_BRACE, ']', "]", nullptr, false },
-  { KEY_BACKSLASH, '\\', "\\", nullptr, false },
-  { KEY_NON_US_NUM, 0, "num", nullptr, false },
-  { KEY_SEMICOLON, ';', ";", nullptr, false },
-  { KEY_QUOTE, '\'', "'", nullptr, false },
-  { KEY_TILDE, '`', "'", nullptr, false },  // tilde key is actually ` in EN_US
-  { KEY_COMMA, ',', ",", nullptr, false },
-  { KEY_PERIOD, '.', ".", nullptr, false },
-  { KEY_SLASH, '/', "/", nullptr, false },
-  { KEY_CAPS_LOCK, 0, "caps", capsLockIcon, false },
-  { KEY_F1, 0, "f1", nullptr, false },
-  { KEY_F2, 0, "f2", nullptr, false },
-  { KEY_F3, 0, "f3", nullptr, false },
-  { KEY_F4, 0, "f4", nullptr, false },
-  { KEY_F5, 0, "f5", nullptr, false },
-  { KEY_F6, 0, "f6", nullptr, false },
-  { KEY_F7, 0, "f7", nullptr, false },
-  { KEY_F8, 0, "f8", nullptr, false },
-  { KEY_F9, 0, "f9", nullptr, false },
-  { KEY_F10, 0, "f10", nullptr, false },
-  { KEY_F11, 0, "f11", nullptr, false },
-  { KEY_F12, 0, "f12", nullptr, false },
-  { KEY_PRINTSCREEN, 0, "pts", nullptr, false },
-  { KEY_SCROLL_LOCK, 0, "scl", nullptr, false },
-  { KEY_PAUSE, 0, "p/b", nullptr, false },
-  { KEY_INSERT, 0, "ins", nullptr, false },
-  { KEY_HOME, 0, "home", homeIcon, false },
-  { KEY_PAGE_UP, 0, "pgup", pageUpIcon, false },
-  { KEY_DELETE, 0, "del", deleteIcon, false },
-  { KEY_END, 0, "end", endIcon, false },
-  { KEY_PAGE_DOWN, 0, "pgdn", pageDownIcon, false },
-  { KEY_RIGHT, 0, "right", rightArrowIcon, false },
-  { KEY_LEFT, 0, "left", leftArrowIcon, false },
-  { KEY_DOWN, 0, "down", downArrowIcon, false },
-  { KEY_UP, 0, "up", upArrowIcon, false },
-  { KEY_NUM_LOCK, 0, "numlk", numLockIcon, false },
-  { KEYPAD_SLASH, '/', "/", nullptr, false },
-  { KEYPAD_ASTERIX, '*', "*", nullptr, false },
-  { KEYPAD_MINUS, '-', "-", nullptr, false },
-  { KEYPAD_PLUS, '+', "+", nullptr, false },
-  { KEYPAD_ENTER, '\n', "enter", returnIcon, false },
-  { KEYPAD_1, '1', "1", nullptr, false },
-  { KEYPAD_2, '2', "2", nullptr, false },
-  { KEYPAD_3, '3', "3", nullptr, false },
-  { KEYPAD_4, '4', "4", nullptr, false },
-  { KEYPAD_5, '5', "5", nullptr, false },
-  { KEYPAD_6, '6', "6", nullptr, false },
-  { KEYPAD_7, '7', "7", nullptr, false },
-  { KEYPAD_8, '8', "8", nullptr, false },
-  { KEYPAD_9, '9', "9", nullptr, false },
-  { KEYPAD_0, '0', "0", nullptr, false },
-  { KEYPAD_PERIOD, '.', ".", nullptr, false },
-  { KEY_NON_US_BS, 0x08, "backspace", backspaceIcon, false },
-  { KEY_MENU, 0, "menu", nullptr, false },
-  { KEY_F13, 0, "f13", nullptr, false },
-  { KEY_F14, 0, "f14", nullptr, false },
-  { KEY_F15, 0, "f15", nullptr, false },
-  { KEY_F16, 0, "f16", nullptr, false },
-  { KEY_F17, 0, "f17", nullptr, false },
-  { KEY_F18, 0, "f18", nullptr, false },
-  { KEY_F19, 0, "f19", nullptr, false },
-  { KEY_F20, 0, "f20", nullptr, false },
-  { KEY_F21, 0, "f21", nullptr, false },
-  { KEY_F22, 0, "f22", nullptr, false },
-  { KEY_F23, 0, "f23", nullptr, false },
-  { KEY_F24, 0, "f24", nullptr, false },
+  { KEY_A, 'a', "a", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_B, 'b', "b", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_C, 'c', "c", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_D, 'd', "d", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_E, 'e', "e", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_F, 'f', "f", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_G, 'g', "g", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_H, 'h', "h", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_I, 'i', "i", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_J, 'j', "j", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_K, 'k', "k", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_L, 'l', "l", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_M, 'm', "m", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_N, 'n', "n", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_O, 'o', "o", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_P, 'p', "p", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_Q, 'q', "q", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_R, 'r', "r", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_S, 's', "s", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_T, 't', "t", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_U, 'u', "u", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_V, 'v', "v", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_W, 'w', "w", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_X, 'x', "x", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_Y, 'y', "y", nullptr, KEY_CATEGORY_ALPHA },
+  { KEY_Z, 'z', "z", nullptr, KEY_CATEGORY_ALPHA },
+
+  { KEY_1, '1', "1", nullptr, KEY_CATEGORY_NUM },
+  { KEY_2, '2', "2", nullptr, KEY_CATEGORY_NUM },
+  { KEY_3, '3', "3", nullptr, KEY_CATEGORY_NUM },
+  { KEY_4, '4', "4", nullptr, KEY_CATEGORY_NUM },
+  { KEY_5, '5', "5", nullptr, KEY_CATEGORY_NUM },
+  { KEY_6, '6', "6", nullptr, KEY_CATEGORY_NUM },
+  { KEY_7, '7', "7", nullptr, KEY_CATEGORY_NUM },
+  { KEY_8, '8', "8", nullptr, KEY_CATEGORY_NUM },
+  { KEY_9, '9', "9", nullptr, KEY_CATEGORY_NUM },
+  { KEY_0, '0', "0", nullptr, KEY_CATEGORY_NUM },
+
+  { KEY_ENTER, '\r', "return", returnIcon, KEY_CATEGORY_TEXT },
+  { KEY_ESC, 0x1b, "esc", escIcon, KEY_CATEGORY_TEXT },
+  { KEY_BACKSPACE, 0x08, "bs", backspaceIcon, KEY_CATEGORY_TEXT },
+  { KEY_DELETE, 0, "del", deleteIcon, KEY_CATEGORY_TEXT },
+  { KEY_TAB, '\t', "tab", tabIcon, KEY_CATEGORY_TEXT },
+  { KEY_SPACE, ' ', " ", spaceIcon, KEY_CATEGORY_TEXT },
+  { KEY_CAPS_LOCK, 0, "caps", capsLockIcon, KEY_CATEGORY_TEXT },
+  { KEY_NUM_LOCK, 0, "numlk", numLockIcon, KEY_CATEGORY_TEXT },
+  { KEY_NON_US_BS, 0x08, "backspace", backspaceIcon, KEY_CATEGORY_TEXT },
+
+  { KEY_MINUS, '-', "-", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_EQUAL, '=', "=", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_LEFT_BRACE, '[', "[", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_RIGHT_BRACE, ']', "]", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_BACKSLASH, '\\', "\\", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_NON_US_NUM, 0, "num", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_SEMICOLON, ';', ";", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_QUOTE, '\'', "'", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_TILDE, '`', "'", nullptr, KEY_CATEGORY_PUNCTUATION },  // tilde key is actually ` in EN_US
+  { KEY_COMMA, ',', ",", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_PERIOD, '.', ".", nullptr, KEY_CATEGORY_PUNCTUATION },
+  { KEY_SLASH, '/', "/", nullptr, KEY_CATEGORY_PUNCTUATION },
+
+  { KEY_F1, 0, "f1", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F2, 0, "f2", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F3, 0, "f3", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F4, 0, "f4", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F5, 0, "f5", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F6, 0, "f6", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F7, 0, "f7", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F8, 0, "f8", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F9, 0, "f9", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F10, 0, "f10", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F11, 0, "f11", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F12, 0, "f12", nullptr, KEY_CATEGORY_FUNCTION },
+
+  { KEY_PRINTSCREEN, 0, "pts", nullptr, KEY_CATEGORY_SYSTEM },
+  { KEY_SCROLL_LOCK, 0, "scl", nullptr, KEY_CATEGORY_SYSTEM },
+  { KEY_PAUSE, 0, "p/b", nullptr, KEY_CATEGORY_SYSTEM },
+  { KEY_INSERT, 0, "ins", nullptr, KEY_CATEGORY_SYSTEM },
+
+  { KEY_HOME, 0, "home", homeIcon, KEY_CATEGORY_CURSOR },
+  { KEY_PAGE_UP, 0, "pgup", pageUpIcon, KEY_CATEGORY_CURSOR },
+  { KEY_END, 0, "end", endIcon, KEY_CATEGORY_CURSOR },
+  { KEY_PAGE_DOWN, 0, "pgdn", pageDownIcon, KEY_CATEGORY_CURSOR },
+  { KEY_RIGHT, 0, "right", rightArrowIcon, KEY_CATEGORY_CURSOR },
+  { KEY_LEFT, 0, "left", leftArrowIcon, KEY_CATEGORY_CURSOR },
+  { KEY_DOWN, 0, "down", downArrowIcon, KEY_CATEGORY_CURSOR },
+  { KEY_UP, 0, "up", upArrowIcon, KEY_CATEGORY_CURSOR },
+
+  { KEYPAD_SLASH, '/', "/", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_ASTERIX, '*', "*", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_MINUS, '-', "-", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_PLUS, '+', "+", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_ENTER, '\n', "enter", returnIcon, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_1, '1', "1", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_2, '2', "2", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_3, '3', "3", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_4, '4', "4", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_5, '5', "5", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_6, '6', "6", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_7, '7', "7", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_8, '8', "8", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_9, '9', "9", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_0, '0', "0", nullptr, KEY_CATEGORY_KEYPAD },
+  { KEYPAD_PERIOD, '.', ".", nullptr, KEY_CATEGORY_KEYPAD },
+
+  { KEY_F13, 0, "f13", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F14, 0, "f14", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F15, 0, "f15", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F16, 0, "f16", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F17, 0, "f17", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F18, 0, "f18", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F19, 0, "f19", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F20, 0, "f20", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F21, 0, "f21", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F22, 0, "f22", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F23, 0, "f23", nullptr, KEY_CATEGORY_FUNCTION },
+  { KEY_F24, 0, "f24", nullptr, KEY_CATEGORY_FUNCTION },
   // end of table marker
-  { NO_CODE, 0, nullptr, nullptr }
+  { NO_CODE, 0, nullptr, nullptr, KEY_CATEGORY_NONE }
 };
 
 const keycode_t TOTALCODES = sizeof(keyInfo)/sizeof(keyInfo[0]) - 1;  // how many unique codes (not including the end of table marker
@@ -309,7 +315,7 @@ const keycode_t TOTALCODES = sizeof(keyInfo)/sizeof(keyInfo[0]) - 1;  // how man
 int getKeyInfoIndex(keycode_t c);
 const keyinfo_t* getKeyInfo(keycode_t c);
 const icon_t getKeyIcon(keycode_t c);
-modifierkey_t getKeyModifier(keycode_t c);
+keycategory_t getKeyCategory(keycode_t c);
 const char* getKeyLabel(keycode_t c);
 
 #endif // _KeyInfo_

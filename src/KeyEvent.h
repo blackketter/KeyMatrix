@@ -49,20 +49,26 @@ class KeyEvent {
       return 0;
     }
 
-    modifierkey_t isModifier() {
+    boolean isCategory(keycategory_t cat) {
       int i = 0;
       do {
         if (keyInfo[i].code == _code) {
-          return keyInfo[i].modifier;
+          return keyInfo[i].category == cat;
         }
         i++;
       } while (keyInfo[i].code != NO_CODE);
       return false;
+
+    }
+
+    boolean isModifier() {
+      return isCategory(KEY_CATEGORY_MODIFIER);
     }
 
     bool isMouseKey() {
-      return _code >= MIN_MOUSE_KEY && _code <= MAX_MOUSE_KEY;
+      return isCategory(KEY_CATEGORY_MOUSE);
     }
+
     bool isMouseMoveKey() {
       return (_code == KEY_MOUSE_MOVE_UP || _code == KEY_MOUSE_MOVE_DOWN || _code == KEY_MOUSE_MOVE_LEFT || _code == KEY_MOUSE_MOVE_RIGHT);
     }

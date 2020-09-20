@@ -126,10 +126,6 @@ void KeyEventQueue::sendKey(keycode_t code, boolean pressed) {
       case KEY_MOUSE_SCROLL_RIGHT:
         if (pressed) Mouse.scroll(0, 1);
         break;
-      case MODIFIERKEY_MOUSE:
-        break;
-      case MODIFIERKEY_MOUSE_SCROLL:
-        break;
       default:
         // ignore
         break;
@@ -240,6 +236,10 @@ void KeyEventQueue::addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t 
 
   char ch = getKeyChar(c);
   KeyEvent* e = new KeyEvent(m, k,c,ch,t,d);
+  if (e == nullptr) {
+    console.debugln("Failed to allocate new KeyEvent!");
+    return;
+  }
   if (keyDebug) {
       console.debugf("key addEvent: \"%s\", switch: %d, code: %d, char: 0x%02x, %s, %s, time:%d.%03d\n",
         getKeyLabel(c), k, c, ch, d ? "pressed" : "released", m == nullptr ? "soft" : "hard", (int)(t/1000), (int)((t%1000)));

@@ -1,6 +1,7 @@
 #ifndef _TypeCommand_
 #include "Console.h"
 #include "Commands/ShellCommands.h"
+#include "Keyboard.h"
 
 ////////////////// Type Command
 class TypeCommand : public ShellCommand {

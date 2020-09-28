@@ -33,8 +33,9 @@ const keycode_t KEY_MOUSE_SCROLL_UP       = 217;
 const keycode_t KEY_MOUSE_SCROLL_DOWN     = 218;
 const keycode_t KEY_MOUSE_SCROLL_LEFT     = 219;
 const keycode_t KEY_MOUSE_SCROLL_RIGHT    = 220;
+const keycode_t KEY_MOUSE                 = 221;
 
-// 221, 222 available
+// 222 available
 
 const keycode_t KEY_FIRST_MACRO           = 223; // leave room for 12 macros for now
 const keycode_t KEY_MACRO_TOTAL           = 12;

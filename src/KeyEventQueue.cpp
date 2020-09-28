@@ -2,6 +2,13 @@
 #include "KeyEventQueue.h"
 #include "Console.h"
 #include "KeyInfo.h"
+#include "Keyboard.h"
+#include "Mouse.h"
+
+#ifndef CORE_TEENSY
+#define MOUSE_BACK 8
+#define MOUSE_FORWARD 16
+#endif
 
 bool keyDebug = false;
 
@@ -115,17 +122,19 @@ void KeyEventQueue::sendKey(keycode_t code, boolean pressed) {
         pressed ? Mouse.press(MOUSE_FORWARD) : Mouse.release(MOUSE_FORWARD);
         break;
       case KEY_MOUSE_SCROLL_UP:
-        if (pressed) Mouse.scroll(-1, 0);
+        if (pressed) Mouse.move(0,0,-1);
         break;
       case KEY_MOUSE_SCROLL_DOWN:
-        if (pressed) Mouse.scroll(1, 0);
+        if (pressed) Mouse.move(0,0,+1);
         break;
+#ifdef CORE_TEENSY
       case KEY_MOUSE_SCROLL_LEFT:
         if (pressed) Mouse.scroll(0, -1);
         break;
       case KEY_MOUSE_SCROLL_RIGHT:
         if (pressed) Mouse.scroll(0, 1);
         break;
+#endif
       default:
         // ignore
         break;

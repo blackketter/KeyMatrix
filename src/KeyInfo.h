@@ -129,7 +129,7 @@ const keyinfo_t keyInfo[] = {
 // nonstandard keys
   { KEY_LEFT_FN, 0, "fn", nullptr, KEY_CATEGORY_MODIFIER },
   { KEY_RIGHT_FN, 0, "fn", nullptr, KEY_CATEGORY_MODIFIER },
-
+  { KEY_MOUSE, 0, "mouse", mouseIcon, KEY_CATEGORY_MOUSE },
   { KEY_MOUSE_MOVE_UP, 0, "mouse up", mouseUpIcon, KEY_CATEGORY_MOUSE },
   { KEY_MOUSE_MOVE_DOWN, 0, "mouse down", mouseDownIcon, KEY_CATEGORY_MOUSE },
   { KEY_MOUSE_MOVE_LEFT, 0, "mouse left", mouseLeftIcon, KEY_CATEGORY_MOUSE },

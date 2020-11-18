@@ -99,7 +99,7 @@ const keyoverlay_t mouseOverlay[] = {
     { MODIFIERKEY_LEFT_GUI, MODIFIERKEY_LEFT_GUI },
 
     { KEY_RIGHT_BRACE, KEY_MOUSE },
-    { KEY_TILDE, KEY_MOUSE },
+    { KEY_EQUAL, KEY_MOUSE },
 
     { NO_CODE, NO_CODE }  // replace the second value with ANY_CODE to make overlay transparent
 };

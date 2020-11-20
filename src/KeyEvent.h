@@ -2,8 +2,10 @@
 #define _KeyEvent_
 
 #include "KeyInfo.h"
+#include "KeyLayout.h"
+#include "Clock.h"
 
-extern boolean keyDebug;
+extern bool keyDebug;
 
 class KeyMatrix;
 

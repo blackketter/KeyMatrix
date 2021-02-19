@@ -1,7 +1,7 @@
 #include "KeyMatrix.h"
-#include "KeyEventQueue.h"
+#include "EventQueue.h"
 
-void KeyMatrix::begin(KeyEventQueue* queue) {
+void KeyMatrix::begin(EventQueue* queue) {
   _queue = queue;
   setMap();  // set to default map
   setLayout(); // set to default layout
@@ -145,7 +145,7 @@ GPIOKeyMatrix::~GPIOKeyMatrix() {
 }
 
 // Diodes have cathodes (positive) on rows, anodes on columns
-void GPIOKeyMatrix::begin(KeyEventQueue* queue) {
+void GPIOKeyMatrix::begin(EventQueue* queue) {
   KeyMatrix::begin(queue);
   for (int i = 0; i < _numRows;i++) {
     pinMode(_rowPin[i], OUTPUT);

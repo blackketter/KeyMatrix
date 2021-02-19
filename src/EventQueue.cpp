@@ -1,5 +1,5 @@
 #include "KeyMatrix.h"
-#include "KeyEventQueue.h"
+#include "EventQueue.h"
 #include "Console.h"
 #include "KeyInfo.h"
 #include "Keyboard.h"
@@ -12,15 +12,15 @@
 
 bool keyDebug = false;
 
-void repeatTimerCallback(void* kq) { ((KeyEventQueue*)kq)->repeat(); };
+void repeatTimerCallback(void* kq) { ((EventQueue*)kq)->repeat(); };
 
-KeyEventQueue::KeyEventQueue(int maxEventHistory) {
+EventQueue::EventQueue(int maxEventHistory) {
   _maxEventHistory = maxEventHistory;
   _repeatTimer.setMillis(_repeatInterval, repeatTimerCallback, this, true);
 }
 
-keyswitch_t KeyEventQueue::sendKeys() {
-  KeyEvent* event = peekNextEvent();
+keyswitch_t EventQueue::sendKeys() {
+  Event* event = peekNextEvent();
   keyswitch_t count = 0;
 
   while (event) {
@@ -36,9 +36,9 @@ keyswitch_t KeyEventQueue::sendKeys() {
   return count;
 }
 
-void KeyEventQueue::releaseKeys() {
+void EventQueue::releaseKeys() {
   if (keyDebug)  console.debugln("release keys");
-  KeyEvent* k = lastEvent();
+  Event* k = lastEvent();
   while (k) {
     if (keyIsDown(k->code())) {
       Keyboard.release(k->code());
@@ -47,7 +47,7 @@ void KeyEventQueue::releaseKeys() {
   }
 }
 
-void KeyEventQueue::sendKey(keycode_t code, boolean pressed) {
+void EventQueue::sendKey(keycode_t code, boolean pressed) {
   if (!isSoftKeyCode(code)) {
     if (pressed) {
       Keyboard.press(code);
@@ -155,12 +155,12 @@ const keycode_t mouseRepeatKeys[] = {
   NO_CODE
 };
 
-void KeyEventQueue::repeat() {
+void EventQueue::repeat() {
   int i = 0;
   keycode_t c = mouseRepeatKeys[i];
   millis_t now = Uptime::millis();
   while (c != NO_CODE) {
-    KeyEvent* e = lastEvent(c);
+    Event* e = lastEvent(c);
     if (e && e->pressed() && ((now - e->time() > _repeatStart) || ((now - _lastRepeat) < _repeatStart))) {
       if (keyDebug)  console.debugf(" repeating code:%d\n",c);
       if (!e->isMouseMoveKey()) { sendKey(c,0); }
@@ -171,8 +171,8 @@ void KeyEventQueue::repeat() {
   }
 }
 
-void KeyEventQueue::truncateHistory() {
-  KeyEvent* curr = _events;
+void EventQueue::truncateHistory() {
+  Event* curr = _events;
 
   // find the nth event
   for (int i = 0; i < _maxEventHistory; i++) {
@@ -190,15 +190,15 @@ void KeyEventQueue::truncateHistory() {
 
   // delete it and all the ones after it
   while (curr) {
-    KeyEvent* last = curr;
+    Event* last = curr;
     curr = curr->getPrev();
     delete last;
     if (keyDebug) console.debugln("deleted old event");
   }
 }
 
-KeyEvent* KeyEventQueue::peekNextEvent() {
-  KeyEvent* next = _lastEvent;
+Event* EventQueue::peekNextEvent() {
+  Event* next = _lastEvent;
   if (next == nullptr) {
     next = firstEvent();
   } else {
@@ -207,8 +207,8 @@ KeyEvent* KeyEventQueue::peekNextEvent() {
   return next;
 }
 
-KeyEvent* KeyEventQueue::getNextEvent() {
-  KeyEvent* next = peekNextEvent();
+Event* EventQueue::getNextEvent() {
+  Event* next = peekNextEvent();
   if (next) {
     _lastEvent = next;
   }
@@ -226,11 +226,11 @@ class KeyDebugCommand : public Command {
 };
 KeyDebugCommand theKeyDebugCommand;
 
-void KeyEventQueue::addEvent(keycode_t c, bool d) {
+void EventQueue::addEvent(keycode_t c, bool d) {
   addEvent(nullptr, NO_KEY, c, Uptime::millis(), d);
 }
 
-void KeyEventQueue::addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t t, bool d) {
+void EventQueue::addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t t, bool d) {
 // note that this may be called recursively
 
 /*
@@ -244,9 +244,9 @@ void KeyEventQueue::addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t 
 */
 
   char ch = getKeyChar(c);
-  KeyEvent* e = new KeyEvent(m, k,c,ch,t,d);
+  Event* e = new Event(m, k,c,ch,t,d);
   if (e == nullptr) {
-    console.debugln("Failed to allocate new KeyEvent!");
+    console.debugln("Failed to allocate new Event!");
     return;
   }
   if (keyDebug) {
@@ -269,16 +269,16 @@ void KeyEventQueue::addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t 
 
 }
 
-void KeyEventQueue::removeEvent(KeyEvent* k) {
+void EventQueue::removeEvent(Event* k) {
   if (keyDebug) {
     console.debugf("key removeEvent: switch: %d, code: %d, char: %c, pressed: %d, %s\n",
                 k->keyswitch(), k->code(), k->character(), k->pressed(), k->matrix() == nullptr ? "soft" : "hard");
   }
-  KeyEvent* curr = _events;
+  Event* curr = _events;
   while (curr) {
     if (curr == k) {
-      KeyEvent* prev = k->getPrev();
-      KeyEvent* next = k->getNext();
+      Event* prev = k->getPrev();
+      Event* next = k->getNext();
       if (prev) {
         prev->setNext(next);
       }
@@ -300,9 +300,9 @@ void KeyEventQueue::removeEvent(KeyEvent* k) {
 };
 
 
-bool KeyEventQueue::keyTapped(keycode_t c) {
-  KeyEvent* h0 = history(0);
-  KeyEvent* h1 = history(1);
+bool EventQueue::keyTapped(keycode_t c) {
+  Event* h0 = history(0);
+  Event* h1 = history(1);
   if (h0 && h1 &&
         (h1->code() == c) && h1->pressed() &&
         (h0->code() == c) && h0->released() &&
@@ -314,10 +314,10 @@ bool KeyEventQueue::keyTapped(keycode_t c) {
   }
 }
 
-bool KeyEventQueue::keyTapHeld(keycode_t c) {
-  KeyEvent* h0 = history(0);
-  KeyEvent* h1 = history(1);
-  KeyEvent* h2 = history(2);
+bool EventQueue::keyTapHeld(keycode_t c) {
+  Event* h0 = history(0);
+  Event* h1 = history(1);
+  Event* h2 = history(2);
   if (h0 && h1 && h2) {
     if (
         (h2->code() == c) && h2->pressed() &&
@@ -333,10 +333,10 @@ bool KeyEventQueue::keyTapHeld(keycode_t c) {
   return false;
 }
 
-bool KeyEventQueue::keyDoubleTapped(keycode_t c) {
-  KeyEvent* h0 = history(0);
-  KeyEvent* h2 = history(2);
-  KeyEvent* h3 = history(3);
+bool EventQueue::keyDoubleTapped(keycode_t c) {
+  Event* h0 = history(0);
+  Event* h2 = history(2);
+  Event* h3 = history(3);
   if ( h0 && h2 && h3 &&
          keyTapped(c) &&
         (h3->code() == c) && h3->pressed() &&
@@ -350,7 +350,7 @@ bool KeyEventQueue::keyDoubleTapped(keycode_t c) {
 }
 
 
-char KeyEventQueue::getKeyChar(keycode_t c) {
+char EventQueue::getKeyChar(keycode_t c) {
   const keyinfo_t* info = getKeyInfo(c);
   if (info) {
     bool shifted = keyIsDown(MODIFIERKEY_LEFT_SHIFT) || keyIsDown(MODIFIERKEY_RIGHT_SHIFT);
@@ -369,11 +369,11 @@ char KeyEventQueue::getKeyChar(keycode_t c) {
   }
 }
 
-void KeyEventQueue::printStatus(Stream* c) {
+void EventQueue::printStatus(Stream* c) {
   if (c == nullptr) { c = &console; }
   c->println("---------------");
   c->println("Key Events:");
-  KeyEvent* event = _events;
+  Event* event = _events;
   int i = 0;
   while (event) {
     c->printf("  Key event[%2d] =%8d.%03d '%s' code:%d switch:%d %s %s\n",

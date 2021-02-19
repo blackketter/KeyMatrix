@@ -1,18 +1,18 @@
-#ifndef _KeyEventQueue_
-#define _KeyEventQueue_
+#ifndef _EventQueue_
+#define _EventQueue_
 
 #include "Clock.h"
 #include "KeyInfo.h"
 #include "KeyLayout.h"
-#include "KeyEvent.h"
+#include "Event.h"
 #include "Timer.h"
 
-class KeyEventQueue {
+class EventQueue {
   public:
-    KeyEventQueue(int maxEventHistory = 200);
+    EventQueue(int maxEventHistory = 200);
 
     // override to process events before they get put in the queue
-    virtual void processEvent(KeyEvent* e) { };
+    virtual void processEvent(Event* e) { };
 
     keyswitch_t sendKeys();  // send key events to host, returns number of key events sent
     void sendKey(keycode_t code, boolean pressed);
@@ -21,19 +21,19 @@ class KeyEventQueue {
     bool keyDoubleTapped(keycode_t c);
     bool keyTapHeld(keycode_t c);
 
-    KeyEvent* getNextEvent();
-    KeyEvent* peekNextEvent();
+    Event* getNextEvent();
+    Event* peekNextEvent();
     void addEvent(KeyMatrix* m, keyswitch_t k, keycode_t c, millis_t t, bool d);
     void addEvent(keycode_t c, bool d);
-    KeyEvent* history(int i) { KeyEvent* e = _events; while (e && i) { e = e->getPrev(); i--; }; return e; }
-    KeyEvent* firstEvent() { KeyEvent* e = _events; while (e) { if (e->getPrev() == nullptr) break; e = e->getPrev(); } return e; }
-    KeyEvent* lastEvent(keycode_t c) { KeyEvent* e = _events; while (e) { if (e->code() == c) break; e = e->getPrev();  }; return e; }
-    KeyEvent* lastEvent() { return _events; };
-    millis_t lastEventTime() { KeyEvent* e = lastEvent();  if (e) return e->time(); else return 0; }
-    KeyEvent* prevEvent(KeyEvent* e) { return e->getPrev(); }
-    void removeEvent(KeyEvent* e);
-    bool keyIsDown(keycode_t c) { KeyEvent* e = lastEvent(c); return (e && e->pressed()); }
-    inline bool keyIsUp(keycode_t c) { KeyEvent* e = lastEvent(c); return (!e || !e->pressed()); }
+    Event* history(int i) { Event* e = _events; while (e && i) { e = e->getPrev(); i--; }; return e; }
+    Event* firstEvent() { Event* e = _events; while (e) { if (e->getPrev() == nullptr) break; e = e->getPrev(); } return e; }
+    Event* lastEvent(keycode_t c) { Event* e = _events; while (e) { if (e->code() == c) break; e = e->getPrev();  }; return e; }
+    Event* lastEvent() { return _events; };
+    millis_t lastEventTime() { Event* e = lastEvent();  if (e) return e->time(); else return 0; }
+    Event* prevEvent(Event* e) { return e->getPrev(); }
+    void removeEvent(Event* e);
+    bool keyIsDown(keycode_t c) { Event* e = lastEvent(c); return (e && e->pressed()); }
+    inline bool keyIsUp(keycode_t c) { Event* e = lastEvent(c); return (!e || !e->pressed()); }
 
     char getKeyChar(keycode_t c);
 
@@ -55,8 +55,8 @@ class KeyEventQueue {
     void clearKeyChanges();
 
     int _maxEventHistory;
-    KeyEvent* _events = nullptr;
-    KeyEvent* _lastEvent = nullptr;
+    Event* _events = nullptr;
+    Event* _lastEvent = nullptr;
 
     CallbackTimer _repeatTimer;
     static const millis_t _repeatInterval = 50;

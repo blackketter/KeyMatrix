@@ -1,5 +1,5 @@
-#ifndef _KeyEvent_
-#define _KeyEvent_
+#ifndef _Event_
+#define _Event_
 
 #include "KeyInfo.h"
 #include "KeyLayout.h"
@@ -9,9 +9,9 @@ extern bool keyDebug;
 
 class KeyMatrix;
 
-class KeyEvent {
+class Event {
   public:
-    KeyEvent(KeyMatrix* matrix, keyswitch_t keyswitch, keycode_t code, char character, millis_t time, bool pressed) {
+    Event(KeyMatrix* matrix, keyswitch_t keyswitch, keycode_t code, char character, millis_t time, bool pressed) {
       _matrix = matrix;
       _time = time;
       _keyswitch = keyswitch;
@@ -33,10 +33,10 @@ class KeyEvent {
     bool pressed(keycode_t c) { return _pressed && (c==_code); }
     bool released() { return !_pressed; }
     bool released(keycode_t c) { return !_pressed && (c==_code); }
-    KeyEvent* getNext() { return _next; }
-    KeyEvent* getPrev() { return _prev; }
-    void setPrev(KeyEvent* prev) { _prev = prev; }
-    void setNext(KeyEvent* next) { _next = next; }
+    Event* getNext() { return _next; }
+    Event* getPrev() { return _prev; }
+    void setPrev(Event* prev) { _prev = prev; }
+    void setNext(Event* next) { _next = next; }
     bool soft() { return _matrix == nullptr; }
     bool hard() { return !soft(); }
 
@@ -82,8 +82,8 @@ class KeyEvent {
     char _char;
     bool _pressed;
     KeyMatrix* _matrix;
-    KeyEvent* _prev;
-    KeyEvent* _next;
+    Event* _prev;
+    Event* _next;
 };
 
 #endif

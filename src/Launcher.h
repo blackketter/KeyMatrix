@@ -3,7 +3,6 @@
 #include "App.h"
 #include "Console.h"
 #include "EventQueue.h"
-extern EventQueue* events;
 
 class Launcher {
   public:
@@ -11,7 +10,7 @@ class Launcher {
 
     virtual void run();   // event loop calls app run() and idle()
 
-    virtual void idle();   // background processing (esp. for event handling)
+    virtual void idle() {};   // background processing (esp. for event handling)
 
     virtual void launchApp(appid_t id);
     virtual void launchApp(App* app);
@@ -22,8 +21,6 @@ class Launcher {
 
     bool event(Event* e);
     void timeChanged();
-
-    millis_t lastEventTime() { return events->lastEventTime(); }
 
     App* getLaunchedApp() { return _launchedApp; }
 

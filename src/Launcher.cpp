@@ -5,9 +5,6 @@ extern Console console;
 
 #include "TypeCommand.h"
 
-#include "Commands/FPSCommand.h"
-FPSCommand theFPSCommand;
-
 void Launcher::begin() {
   // initialize apps
   App* anApp = App::getFirstApp();
@@ -15,9 +12,6 @@ void Launcher::begin() {
     anApp->init();
     anApp = anApp->getNextApp();
   }
-}
-
-void Launcher::idle() {
 }
 
 // todo: sort the app list by priority instead of going through the list over and over again
@@ -93,19 +87,19 @@ void Launcher::run() {
       _lastApp = currentApp();
       _currApp = _launchedApp;
 
-      console.debugf("Launching app: %s\n", _currApp->name());
+      console.debugf("begin app: %s\n", _currApp->name());
       _currApp->begin();
     }
     _launchedApp = nullptr;
   }
 
 // Run it
-  _currApp->run();
+  if (_currApp) {
+    _currApp->run();
+  }
 
 // Idle system
   idle();
-
-  theFPSCommand.newFrame();
 }
 
 void Launcher::launchApp(App* app) {

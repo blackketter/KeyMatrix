@@ -6,7 +6,7 @@
 
 class Launcher {
   public:
-    virtual void begin();  // system setup
+    virtual void begin();  // system setup, calls init() on all apps
 
     virtual void run();   // event loop calls app run() and idle()
 
@@ -29,7 +29,5 @@ class Launcher {
     App* _currApp = nullptr;
     App* _launchedApp = nullptr;
     App* _lastApp = nullptr;
-
-
 };
 #endif

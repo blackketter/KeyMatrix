@@ -3,6 +3,7 @@
 
 #include "Event.h"
 
+// how early should an app get an opportunity to process events via event()
 enum EventPriority {
     PRIORITY_FIRST = -1000,
     PRIORITY_EARLY = -500,
@@ -21,38 +22,40 @@ class App {
     virtual const char* name() = 0;
     virtual appid_t id() = 0;
 
-    inline App* getNextApp() { return _nextApp; }
-    inline void setNextApp(App* app) {  _nextApp = app; };
-
-    static App* getFirstApp() { return _appList; }
-    static App* getAppByID(appid_t appID);
-    static void sortApps();
-    static App* findApp(const char* s);
-
-    virtual void init() {};  // initialize app at system startup
+    virtual void init() {};  // initialize app once, typically at system startup
     virtual void begin() {}; // called once when an app is launched
     virtual void run() {};   // called periodically while app is launched
     virtual void end();      // called after final run(), lets app clean up, releasing any memory temporarily allocated for runs
 
-    bool isID(appid_t match);
-
-    // give apps an opportuntity to run in the background, useful for processing keyboard events before they go to the currently running app or off to host
-    // return if the event is consumed and should not be further processed
+    // give apps an opportuntity to process events before the launched/running app consumes them
+    // return true if the event is consumed and should not be further processed
     virtual bool event(Event* key);
+
+    // returns indication of how early this app wants to process events
     virtual EventPriority eventPriority() { return PRIORITY_NORMAL; };
+
+    bool isID(appid_t match);
+    static App* getFirstApp() { return _appList; }
+    inline App* getNextApp() { return _nextApp; }
+
+    static App* getAppByID(appid_t appID);
+    static App* findApp(const char* s);
+
+    static void sortApps();
 
   protected:
     static const millis_t _maxRunTime = 10;
 
   private:
-    App* _nextApp = nullptr;
-    static App* _appList;
-
     static void setFirstApp(App* a) { _appList = a; }
+    inline void setNextApp(App* app) {  _nextApp = app; };
     static void addApp(App* app) {
       app->setNextApp(_appList);
       _appList = app;
     }
+
+    App* _nextApp = nullptr;
+    static App* _appList;
 };
 
 #endif

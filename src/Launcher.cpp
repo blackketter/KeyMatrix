@@ -6,12 +6,25 @@ extern Console console;
 #include "TypeCommand.h"
 
 void Launcher::begin() {
+  return;
   // initialize apps
-  App* anApp = App::getFirstApp();
-  while (anApp != nullptr) {
+  App* anApp;
+  int i;
+
+  i = 0;
+  anApp = App::getFirstApp();
+  while (anApp) {
+    console.debugf("%d\n",i++);
+//    console.debugln(anApp->id());
+//    console.debug(anApp->name());
     anApp->init();
+//    console.println("...inited");
     anApp = anApp->getNextApp();
+//    console.debugf("*** next:%d\n",(int)anApp);
+//    console.debugln(anApp->name());
+    delay(20);
   }
+  console.debugln("apps inited");
 }
 
 // todo: sort the app list by priority instead of going through the list over and over again
@@ -104,15 +117,15 @@ void Launcher::run() {
 
 void Launcher::launchApp(App* app) {
   if (app) {
+    console.debugf("Launching app: %d\n", (int)app);
     _launchedApp = app;
-//    console.debugf("Launching app: %d\n", (int)app);
   } else {
     console.debugln("Can't switch to null newApp, bailing");
   }
 }
 
 void Launcher::launchApp(appid_t id) {
-//  console.debugf("launching app id: %s\n", id);
+  console.debugf("launching app id: %s\n", id);
   launchApp(App::getAppByID(id));
 }
 

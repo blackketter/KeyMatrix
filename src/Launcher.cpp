@@ -117,7 +117,6 @@ void Launcher::run() {
 
 void Launcher::launchApp(App* app) {
   if (app) {
-    console.debugf("Launching app: %d\n", (int)app);
     _launchedApp = app;
   } else {
     console.debugln("Can't switch to null newApp, bailing");
@@ -125,7 +124,6 @@ void Launcher::launchApp(App* app) {
 }
 
 void Launcher::launchApp(appid_t id) {
-  console.debugf("launching app id: %s\n", id);
   launchApp(App::getAppByID(id));
 }
 

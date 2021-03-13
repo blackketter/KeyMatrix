@@ -25,7 +25,9 @@ class Launcher {
     App* getLaunchedApp() { return _launchedApp; }
 
   protected:
+    App* getLastApp() { return _lastApp; }
 
+  private:
     App* _currApp = nullptr;
     App* _launchedApp = nullptr;
     App* _lastApp = nullptr;

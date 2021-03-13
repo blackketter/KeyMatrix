@@ -100,7 +100,7 @@ void Launcher::run() {
       _lastApp = currentApp();
       _currApp = _launchedApp;
 
-      console.debugf("begin app: %s\n", _currApp->name());
+//      console.debugf("begin app: %s\n", _currApp->name());
       _currApp->begin();
     }
     _launchedApp = nullptr;

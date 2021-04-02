@@ -10,7 +10,7 @@ class Launcher {
 
     virtual void run();   // event loop calls app run() and idle()
 
-    virtual void idle() {};   // background processing (esp. for event handling)
+    virtual void idle();   // background processing (esp. for event handling)
 
     virtual void launchApp(appid_t id);
     virtual void launchApp(App* app);

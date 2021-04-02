@@ -115,6 +115,12 @@ void Launcher::run() {
   idle();
 }
 
+void Launcher::idle() {
+  // TODO: Move this out?
+  // make sure the Timers get a chance to call their callbacks
+  Timer::idle();
+  console.idle();
+}
 void Launcher::launchApp(App* app) {
   if (app) {
     _launchedApp = app;
